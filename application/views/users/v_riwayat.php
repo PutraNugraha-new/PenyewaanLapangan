@@ -1,71 +1,142 @@
-<div class="container" style="height:73vh;">
-    <div class="row my-3">
-        <?php foreach($riwayat as $data): ?>
-        <div class="col-md-4">
-            <div class="card card-light">
-                <div class="row">
-                    <div class="col-md-5">
-                        <img src="<?= base_url() ?>foto_produk/<?= $data->foto_brg ?>" class="img-fluid" alt="Bangku">
-                        <p class="mt-4 ms-4">
-                        <?php
-                        // Tentukan kelas warna badge berdasarkan status pesanan
-                        $badge_class = ($data->status_pemesanan == 'proses') ? 'badge-danger' : 'badge-primary';
-                        ?>
-                            Status : <span class="badge <?= $badge_class ?>"><?= $data->status_pemesanan ?></span>
-                        </p>
-                    </div>
-                    <div class="col-md-7">
-                        <h5 class="mt-2"><?= $data->nama_brg ?></h5>
-                        <p class="text-end me-4">Jumlah x<?= $data->kuantitas ?></p>
-                        <p class="text-end me-4 text-primary">
-                            Harga Satuan : Rp. <?= $data->harga_satuan ?>
-                        </p>
-                        <p class="ms-4">
-                            Alamat : <br>  <?= $data->alamat ?>
-                        </p>
-                    </div>
+<div class="container" style="height:75vh;">
+    <div class="row my-3" id="filteredResults">
+        <div class="col-md-12 col-12 my-2">
+            <div class="card shadow rounded-1">
+                <div class="card-header text-center">
+                    <p>Untuk Pembayaran silahkan Transfer ke</p>
+                    <p>1234567 (Adrisuseno)</p>
                 </div>
-                <hr>
-                <div class="accordion" id="accordionExample">
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="# <?= $data->id_detail ?>" aria-expanded="true" aria-controls=" <?= $data->id_detail ?>">
-                                Detail
-                                </button>
-                            </h2>
-                        </div>
-                        <div id=" <?= $data->id_detail ?>" class="collapse position-relative" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <p>Tinggi : <?= $data->tinggi_dipesan ?>m<sup>2</sup></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Lebar : <?= $data->lebar_dipesan ?>m<sup>2</sup></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Jumlah Rak : <?= $data->rak ?></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Jumlah Laci : <?= $data->laci ?></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Jumlah Pintu : <?= $data->jml_pintu ?></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Jenis Pintu : <?= $data->jenis_pintu ?></p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p>Jumlah Gantungan : <?= $data->jml_gantungan ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>Kode Pesanan</th>
+                                <th>No Lapangan</th>
+                                <th>Tanggal main</th>
+                                <th>Jam Main</th>
+                                <th>Lama Main</th>
+                                <th>Total Bayar</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Kode Pesanan</th>
+                                <th>No Lapangan</th>
+                                <th>Tanggal main</th>
+                                <th>Jam Main</th>
+                                <th>Lama Main</th>
+                                <th>Total Bayar</th>
+                                <th>Status</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <?php foreach($riwayat as $data): ?>
+                                <tr>
+                                    <td><?= $data->kode_pemesanan ?></td>
+                                    <td><?= $data->no_lapangan ?></td>
+                                    <td><?= $data->tgl_main ?></td>
+                                    <td><?= $data->jam_dipesan ?></td>
+                                    <td><?= $data->jam_bermain ?> Jam</td>
+                                    <td>Rp. <?= $data->total_bayar ?></td>
+                                    <td>
+                                        <span class="badge p-2 <?= $data->status == 'proses' ? 'badge-danger' : 'badge-primary'  ?>">
+                                            <?php if($data->status == 'disewa') : ?>
+                                                Berhasil Disewa
+                                            <?php else: ?>
+                                                <?= $data->status ?>
+                                            <?php endif; ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>               
                 </div>
             </div>
         </div>
-        <?php endforeach; ?>
     </div>
 </div>
+
+<script>
+$(document).ready(function(){
+    $('.close').click(function(){
+        // Merefresh halaman
+        location.reload();
+    });
+    $('#exampleModal').on('hidden.bs.modal', function () {
+        // Merefresh halaman
+        alert('test');
+    });
+
+    $('.pra-pesan').click(function() {
+        var id = $(this).data('id');
+        $('.modal-title').html('Pesan Lapangan ' + id);
+        $('#no_lapangan').val(id);
+    });
+
+    $('#tgl_main').change(function () {
+        var tgl = $(this).val();
+        var noLapangan = $('#no_lapangan').val();
+
+        $.ajax({
+            url: 'getJadwal',
+            data: {
+                tgl_main : tgl,
+                no_lapangan : noLapangan,
+            },
+            method: 'post',
+            dataType:'json',
+            success:function(data){
+                // console.log(data);
+                handleResponse(data);
+            }
+        });
+
+    });
+    function handleResponse(data) {
+        // Mengaktifkan kembali semua checkbox
+        $('input[type="checkbox"]').prop('disabled', false);
+        
+        // Loop melalui data yang diterima
+        $.each(data, function(index, jam) {
+            // Men-disable checkbox dengan nilai jam yang diterima
+            $('input[type="checkbox"][value="'+jam+'"]').prop('disabled', true);
+        });
+    }
+    // Menambahkan event listener ke setiap checkbox
+    $('input[type="checkbox"]').change(function(){
+        var totalJam = 0;
+        // Array untuk menyimpan waktu yang dipilih
+        var selectedTimes = [];
+        // Loop melalui checkbox yang dicentang
+        $('input[type="checkbox"]:checked').each(function(){
+            // Mendapatkan nilai checkbox (jam awal - jam akhir)
+            var value = $(this).val();
+            // Memisahkan jam awal dan jam akhir
+            var times = value.split('-');
+            // Menambahkan ke array selectedTimes
+            selectedTimes.push({start: parseInt(times[0]), end: parseInt(times[1])});
+        });
+        // Jika ada waktu yang dipilih
+        if (selectedTimes.length > 0) {
+            // Mengurutkan waktu terkecil ke terbesar
+            selectedTimes.sort(function(a, b) {
+                return a.start - b.start;
+            });
+            // Menghitung selisih waktu antara jam awal dan jam akhir
+            totalJam = selectedTimes[selectedTimes.length - 1].end - selectedTimes[0].start;
+        }
+        // Menetapkan nilai total jam ke elemen dengan id "total_jam"
+        $('#total_jam').text(totalJam + " jam");
+
+        // Menghitung total bayar
+        var totalBayar = totalJam * 40000;
+        // Menetapkan nilai total bayar ke elemen dengan id "total_bayar"
+        $('#total_bayar').text("Rp " + totalBayar.toLocaleString());
+
+        $('#jam_bermain').val(totalJam);
+        $('#total_bayarr').val(totalBayar);
+    });
+});
+</script>

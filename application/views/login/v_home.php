@@ -1,54 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blesing Home Art</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="<?= base_url() ?>assets/css/login.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-</head>
-<body>
-    <div class="container my-3 d-flex justify-content-center">
-        <div class="card login shadow">
-            <div class="card-body">
-                <p class="text-center font-weight-bold">Login</p>
-                <p class="text-center font-weight-bold">Blesing Home Art</p>
-                <?php $fattr = array('class' => 'form-signin');
-                    echo form_open(site_url().'main/login/', $fattr); 
-                ?>
-                <div class="form-group">
-                    <?php echo form_input(array(
-                        'name'=>'email', 
-                        'id'=> 'email', 
-                        'placeholder'=>'Username', 
-                        'class'=>'form-control mx-auto',  
-                        'value'=> set_value('email'))); ?>
-                    <?php echo form_error('email', '<div class="alert alert-danger" role="alert">', '</div>') ?>
-                </div>
-                <div class="form-group">
-                    <?php echo form_password(array(
-                        'name'=>'password',
-                        'type' => 'password',
-                        'id'=> 'password', 
-                        'placeholder'=>'Password', 
-                        'class'=>'form-control mx-auto', 
-                        'placeholder'=>'Password',
-                        'value'=> set_value('password'))); ?>
-                    <?php echo form_error('password', '<div class="alert alert-danger" role="alert">', '</div>') ?>
-                </div>
-                <?php 
-                    echo form_submit(array('value'=>'Login', 'class'=>'btn btn-danger mx-auto btn-block')); ?>
-                <?php echo form_close(); ?>
-                <p class="text-secondary my-3 text-center">Belum punya akun ? <a href="<?= base_url() ?>main/tambahpengguna" class="text-danger">Daftar Sekarang !</a></p>
+<div class="container my-3" style="height:75vh;">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Selamat Datang</h2>
+        </div>
+    </div>
+    <?php if ($this->session->flashdata('flash_message')): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $this->session->flashdata('flash_message'); ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
+    <?php if ($this->session->flashdata('success_message')): ?>
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <?= $this->session->flashdata('success_message'); ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
+    <div class="row my-2 d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <form action="<?= base_url() ?>welcome/loginUser" method="post">
+                        <div class="row my-3">
+                            <div class="col-sm-12 text-center">
+                                <h4>Login Pelanggan</h4>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-4 col-form-label">Username</label>
+                            <div class="col-sm-7">
+                                <input type="username" class="form-control" id="username" name="username" placeholder="Masukan username">
+                                <span class="text-danger">
+                                    <?php echo form_error('username') ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-4 col-form-label">Password</label>
+                            <div class="col-sm-7">
+                                <input type="password" class="form-control mb-2" id="password" name="password" placeholder="Masukan Password">
+                                <span class="text-danger">
+                                    <?php echo form_error('password') ?>
+                                </span>
+                                <a href="<?= base_url() ?>welcome/forgot">Lupa Password</a>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <button type="reset" class="btn btn-danger mx-1">Batal</button>
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <a href="<?= base_url() ?>welcome/registrasi">
+                                Belum punya akun?
+                            </a>
+                        </div>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</body>
-</html>
+</div>

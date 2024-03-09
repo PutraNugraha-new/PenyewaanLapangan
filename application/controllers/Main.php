@@ -37,7 +37,7 @@ class Main extends CI_Controller {
         if(empty($this->session->userdata['email'])){
             redirect(site_url().'main/login/');
         }else{
-            redirect(site_url().'welcome');
+            redirect(site_url().'dashboard');
         }
 
 	}

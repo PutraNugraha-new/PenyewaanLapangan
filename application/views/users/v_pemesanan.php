@@ -1,197 +1,206 @@
-<div class="container">
-    <div class="row my-3">
-        <div class="col-md-12">
-            <div class="card">
+<div class="container pemesanan" style="height:75vh;">
+    <div class="row my-3 d-flex justify-content-around" id="filteredResults">
+        <div class="col-md-3 col-10 my-2">
+            <div class="card shadow rounded-1">
                 <div class="card-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Produk</th>
-                                <th scope="col">Nama Produk</th>
-                                <th scope="col">Harga</th>
-                                <th scope="col">Jumlah</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $index=1; foreach($pemesanan as $data): ?>
-                            <tr>
-                                <th>
-                                    <img src="<?= base_url() ?>foto_produk/<?= $data->foto_brg ?>" style="width:100px;height:100px;" class="img-fluid rounded-3" alt="Bangku">
-                                </th>
-                                <td><?= $data->nama_brg ?></td>
-                                <td>
-                                    <p id="harga" data-harga="<?= $data->harga ?>">
-                                        Rp. <?= $data->harga ?>
-                                    </p>
-                                </td>
-                                <td>
-                                    <input type="number" readonly value="<?= $data->kuantitas ?>" data-id="<?= $data->id_keranjang ?>" name="jumlah" value="<?= $data->kuantitas ?>" style="width:80px;" class="form-control" id="jumlah">
-                                    <input type="hidden" value="<?= $data->id_produk ?>" data-id="<?= $data->id_keranjang ?>" name="idProduk" value="<?= $data->id_produk ?>" style="width:80px;" id="idProduk">
-                                    <input type="hidden" value="<?= $data->tinggi_dipesan ?>" name="tinggi" id="tinggi">
-                                    <input type="hidden" value="<?= $data->lebar_dipesan ?>" name="lebar" id="lebar">
-                                    <input type="hidden" value="<?= $data->rak ?>" name="rak" id="rak">
-                                    <input type="hidden" value="<?= $data->laci ?>" name="laci" id="laci">
-                                    <input type="hidden" value="<?= $data->jml_pintu ?>" name="jml_pintu" id="jml_pintu">
-                                    <input type="hidden" value="<?= $data->jenis_pintu ?>" name="jenis_pintu" id="jenis_pintu">
-                                    <input type="hidden" value="<?= $data->warna ?>" name="warna" id="warna">
-                                    <input type="hidden" value="<?= $data->jml_gantungan ?>" name="jml_gantungan" id="jml_gantungan">
-                                    <input type="hidden" value="<?= $data->deskripsi_dipesan ?>" name="deskripsi_dipesan" id="deskripsi_dipesan">
-                                </td>
-                                <td>
-                                    <p id="keranjang<?= $index ?>" data-total="<?= $data->harga_dipesan ?>">Rp.<?= $data->harga_dipesan ?></p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary hapusProduk" data-id="<?= $data->id_keranjang ?>">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php $index++; endforeach; ?>
-                        </tbody>
-                    </table>
-                    <p>Subtotal : <span id="subtotal"></span></p>
+                    <img src="<?= base_url() ?>assets/images/samples/lapangan1.jpeg" style="width:100%;height:200px;" class="img-fluid rounded-3" alt="Lapangan">                
+                </div>
+                <div class="card-footer">
+                    <h4>Lapangan 1</h4>
+                    <?php if($this->session->userdata('username')):  ?>
+                    <!-- <a href="#" class="btn pra-pesan" data-id="">
+                        <i class="fa-solid fa-cart-plus"></i>
+                    </a> -->
+                    <button type="button" class="btn btn-success pra-pesan" data-id="1" data-toggle="modal" data-target="#exampleModal">
+                        Pesan
+                    </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-10 my-2">
+            <div class="card shadow rounded-1">
+                <div class="card-body">
+                    <img src="<?= base_url() ?>assets/images/samples/lapangan2.jpeg" style="width:100%;height:200px;" class="img-fluid rounded-3" alt="Lapangan">                
+                </div>
+                <div class="card-footer">
+                    <h4>Lapangan 2</h4>
+                    <?php if($this->session->userdata('username')):  ?>
+                    <!-- <a href="#" class="btn pra-pesan" data-id="">
+                        <i class="fa-solid fa-cart-plus"></i>
+                    </a> -->
+                    <button type="button" class="btn btn-success pra-pesan" data-id="2" data-toggle="modal" data-target="#exampleModal">
+                        Pesan
+                    </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-10 my-2">
+            <div class="card shadow rounded-1">
+                <div class="card-body">
+                    <img src="<?= base_url() ?>assets/images/samples/lapangan1.jpeg" style="width:100%;height:200px;" class="img-fluid rounded-3" alt="Lapangan">                
+                </div>
+                <div class="card-footer">
+                    <h4>Lapangan 3</h4>
+                    <?php if($this->session->userdata('username')):  ?>
+                    <!-- <a href="#" class="btn pra-pesan" data-id="">
+                        <i class="fa-solid fa-cart-plus"></i>
+                    </a> -->
+                    <button type="button" class="btn btn-success pra-pesan" data-id="3" data-toggle="modal" data-target="#exampleModal">
+                        Pesan
+                    </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-3">
-            <table class="table table-striped">
-                <tr>
-                    <td>Ongkos Kirim</td>
-                    <td>
-                        <p id="ongkir" data-ongkir="300000">Rp. 300.000</p> 
-                    </td>
-                </tr>
-                <tr>
-                    <td>Total Akhir</td>
-                    <td>
-                        <p id="totalAkhir"></p>
-                    </td>
-                </tr>
-            </table>
-            <button class="btn btn-danger">Batalkan</button>
-            <button class="btn btn-primary pesanButton" id="pesanButton">Pesan</button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row text-center">
+            <div class="col-12">
+                <span class="text-primary">Informasi Pemesanan :</span>
+                <p>Tarif Lapangan Rp. 40.000 per Jam</p>
+                <p>Setiap Pemesanan</p>
+                <p>Tidak Termasuk Shuttlecock (Bola)</p>
+            </div>
         </div>
+        <div class="row mx-3">
+            <hr>
+            <label for="alamat" class="font-weight-bold">Pilih Waktu Pemesanan :</label>
+            <form action="<?= base_url() ?>welcome/add" method="post">
+                <div class="row mx-auto">
+                    <div class="col-12 my-4">
+                        <input type="date" id="tgl_main" class="form-control" name="tgl_main">
+                    </div>
+                    <div class="col-6">
+                        <label><input type="checkbox" name="jam[]" value="8-9"> 08.00-09.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="9-10"> 09.00-10.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="10-11"> 10.00-11.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="11-12"> 11.00-12.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="12-13"> 12.00-13.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="13-14"> 13.00-14.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="14-15"> 14.00-15.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="15-16"> 15.00-16.00</label><br>
+                    </div>
+                    <div class="col-6">
+                        <label><input type="checkbox" name="jam[]" value="16-17"> 16.00-17.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="17-18"> 17.00-18.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="18-19"> 18.00-19.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="19-20"> 19.00-20.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="20-21"> 20.00-21.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="21-22"> 21.00-22.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="22-23"> 22.00-23.00</label><br>
+                        <label><input type="checkbox" name="jam[]" value="23-24"> 23.00-24.00</label><br>
+                    </div>
+                </div>
+                <input type="hidden" name="id_pelanggan" value="<?= $this->session->userdata('id_pelanggan') ?>" id="id_pelanggan">
+                <input type="hidden" name="no_lapangan" id="no_lapangan">
+                <input type="hidden" name="jam_bermain" id="jam_bermain">
+                <input type="hidden" name="total_bayar" id="total_bayarr">
+                <div>Total Jam: <span id="total_jam">0 jam</span></div>
+                <div>Total Bayar: <span id="total_bayar">Rp 0</span></div>
+                
+            </div>
+        </div>
+        <div class="modal-footer" >
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary btn-tambah" onClick="return confirm('Apakah Ingin Pesan Lapangan?')">Pesan Lapangan</button>
+        </div>
+    </form>
+    </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        function hitungTotalAwal() {
-            var subtotal = 0;
-            $('[id^="keranjang"]').each(function() {
-                subtotal += parseInt($(this).data('total').replace(/\./g, ''), 10);
-            });
-            $('#subtotal').text('Rp.' + subtotal.toLocaleString('id-ID'));
+    $(document).ready(function(){
+        $('.close').click(function(){
+            // Merefresh halaman
+            location.reload();
+        });
+        $('#exampleModal').on('hidden.bs.modal', function () {
+            // Merefresh halaman
+            alert('test');
+        });
 
-            var ongkir = parseInt($('#ongkir').data('ongkir'), 10);
-            var totalAkhir = subtotal + ongkir;
-            $('#totalAkhir').text('Rp.' + totalAkhir.toLocaleString('id-ID'));
-        }
-
-
-        // Panggil fungsi hitungTotalAwal saat halaman dimuat
-        hitungTotalAwal();
-
-        $('.hapusProduk').on('click', function () {
-
+        $('.pra-pesan').click(function() {
             var id = $(this).data('id');
+            $('.modal-title').html('Pesan Lapangan ' + id);
+            $('#no_lapangan').val(id);
+        });
+
+        $('#tgl_main').change(function () {
+            var tgl = $(this).val();
+            var noLapangan = $('#no_lapangan').val();
+
             $.ajax({
-                url: '<?= base_url("welcome/delete") ?>',
+                url: 'getJadwal',
                 data: {
-                    id : id
+                    tgl_main : tgl,
+                    no_lapangan : noLapangan,
                 },
                 method: 'post',
                 dataType:'json',
-                success:function(response){
-                    location.reload();
-                }, 
-                error: function (xhr, status, error) {
-                    console.error("Error: " + status, error);
+                success:function(data){
+                    // console.log(data);
+                    handleResponse(data);
                 }
             });
 
         });
-    });
-
-    $(document).on('click', '.pesanButton', function() {
-        var pesanan = [];
-        
-        // console.log(totalbayar);        
-        // Loop melalui setiap baris pesanan
-        $('tbody tr').each(function() {
-            var id_produk_cek = $(this).find('input[name="idProduk"]');
-            var kuantitas_cek = $(this).find('input[name="jumlah"]');
-            var harga_satuan_cek = $(this).find('#harga');
-            var tinggi = $(this).find('#tinggi');
-            var lebar = $(this).find('#lebar');
-            var rak = $(this).find('#rak');
-            var laci = $(this).find('#laci');
-            var jml_pintu = $(this).find('#jml_pintu');
-            var jenis_pintu = $(this).find('#jenis_pintu');
-            var warna = $(this).find('#warna');
-            var jml_gantungan = $(this).find('#jml_gantungan');
-            var deskripsi_dipesan = $(this).find('#deskripsi_dipesan');
+        function handleResponse(data) {
+            // Mengaktifkan kembali semua checkbox
+            $('input[type="checkbox"]').prop('disabled', false);
             
-
-            if(id_produk_cek.length > 0 && kuantitas_cek.length > 0 && harga_satuan_cek.length > 0){
-                var id_produk =id_produk_cek.val();
-                var kuantitas = kuantitas_cek.val();
-                var tinggi = tinggi.val();
-                var lebar = lebar.val();
-                var rak = rak.val();
-                var laci = laci.val();
-                var jml_pintu = jml_pintu.val();
-                var jenis_pintu = jenis_pintu.val();
-                var warna = warna.val();
-                var jml_gantungan = jml_gantungan.val();
-                var deskripsi_dipesan = deskripsi_dipesan.val();
-                var harga_satuan = harga_satuan_cek.data('harga');
-                var subtotal = 0;
-                $('[id^="keranjang"]').each(function() {
-                    subtotal += parseInt($(this).data('total').replace(/\./g, ''), 10);
+            // Loop melalui data yang diterima
+            $.each(data, function(index, jam) {
+                // Men-disable checkbox dengan nilai jam yang diterima
+                $('input[type="checkbox"][value="'+jam+'"]').prop('disabled', true);
+            });
+        }
+        // Menambahkan event listener ke setiap checkbox
+        $('input[type="checkbox"]').change(function(){
+            var totalJam = 0;
+            // Array untuk menyimpan waktu yang dipilih
+            var selectedTimes = [];
+            // Loop melalui checkbox yang dicentang
+            $('input[type="checkbox"]:checked').each(function(){
+                // Mendapatkan nilai checkbox (jam awal - jam akhir)
+                var value = $(this).val();
+                // Memisahkan jam awal dan jam akhir
+                var times = value.split('-');
+                // Menambahkan ke array selectedTimes
+                selectedTimes.push({start: parseInt(times[0]), end: parseInt(times[1])});
+            });
+            // Jika ada waktu yang dipilih
+            if (selectedTimes.length > 0) {
+                // Mengurutkan waktu terkecil ke terbesar
+                selectedTimes.sort(function(a, b) {
+                    return a.start - b.start;
                 });
-                var totalbayar = $('#totalAkhir').text().replace('Rp.', '').trim();
-                
+                // Menghitung selisih waktu antara jam awal dan jam akhir
+                totalJam = selectedTimes[selectedTimes.length - 1].end - selectedTimes[0].start;
+            }
+            // Menetapkan nilai total jam ke elemen dengan id "total_jam"
+            $('#total_jam').text(totalJam + " jam");
 
-            // Tambahkan data pesanan ke array
-                pesanan.push({
-                    id_produk: id_produk,
-                    tinggi: tinggi,
-                    lebar: lebar,
-                    rak: rak,
-                    laci: laci,
-                    jml_pintu: jml_pintu,
-                    jenis_pintu: jenis_pintu,
-                    warna: warna,
-                    jml_gantungan: jml_gantungan,
-                    deskripsi_dipesan: deskripsi_dipesan,
-                    kuantitas: kuantitas,
-                    harga_satuan: harga_satuan,
-                    subtotal: subtotal,
-                    totalbayar: totalbayar
-                });
-            }else{
-                // console.log("Elemen tidak ditemukan pada baris tabel ini.");
-            }
-                
-        });
-        
-        $.ajax({
-            url: '<?= base_url("welcome/simpan_pesanan") ?>', 
-            method: 'POST',
-            dataType: 'json',
-            data: { pesanan: pesanan },
-            success: function(response) {
-                alert('Pesanan Telah Dibuat, lihat proses pada menu Riwayat');
-                location.reload();
-            },
-            error: function(xhr, status, error) {
-                console.error("Error: " + status, error);
-            }
+            // Menghitung total bayar
+            var totalBayar = totalJam * 40000;
+            // Menetapkan nilai total bayar ke elemen dengan id "total_bayar"
+            $('#total_bayar').text("Rp " + totalBayar.toLocaleString());
+
+            $('#jam_bermain').val(totalJam);
+            $('#total_bayarr').val(totalBayar);
         });
     });
 </script>

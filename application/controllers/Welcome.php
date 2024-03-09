@@ -3,23 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
 
-	public $status;
-    public $roles;
-
 	function __construct(){
         parent::__construct();
-        $this->load->model('M_produk', 'M_produk', TRUE);
-        $this->load->model('M_keranjang', 'M_keranjang', TRUE);
-        $this->load->model('M_galeri', 'M_galeri', TRUE);
-        $this->load->model('M_pemesanan', 'M_pemesanan', TRUE);
-        $this->load->model('M_riwayat', 'M_riwayat', TRUE);
-        $this->load->model('M_warna', 'M_warna', TRUE);
-		$this->load->model('User_model', 'user_model', TRUE);
+		$this->load->model('M_pelanggan', 'M_pelanggan', TRUE);
+		$this->load->model('M_pemesanan', 'M_pemesanan', TRUE);
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
-        $this->status = $this->config->item('status');
-        $this->roles = $this->config->item('roles');
-        $this->load->library('userlevel');
 		$this->load->library('email');
     }
 
@@ -27,287 +16,313 @@ class Welcome extends CI_Controller {
 	{	
 		$data = array(  
             'isi'   =>  'users/v_home',
-			'produk' => $this->M_produk->allData(),
 		);
 		$this->load->view('users/layout/v_wrapper', $data, FALSE);
 	}
 
-	public function produk(){
-		$data = array(
-			'isi' => 'users/v_produk',
-			'warna' => $this->M_warna->AllData(),
-			'produk' => $this->M_produk->allData(),
+	public function login(){
+		$data = array(  
+            'isi'   =>  'login/v_home',
 		);
 		$this->load->view('users/layout/v_wrapper', $data, FALSE);
 	}
-	public function warna(){
-		$data = array(
-			'isi' => 'users/v_warna',
-			'warna' => $this->M_warna->AllData(),
+
+	public function registrasi(){
+		$data = array(  
+            'isi'   =>  'login/v_registrasi',
 		);
 		$this->load->view('users/layout/v_wrapper', $data, FALSE);
 	}
 
 	public function pemesanan(){
-		$data = $this->session->userdata;
-	    if(empty($data)){
-	        redirect(site_url().'main/login/');
-	    }
-
-	    //check user level
-	    if(empty($data['role'])){
-	        redirect(site_url().'main/login/');
-	    }
-	    $dataLevel = $this->userlevel->checkLevel($data['role']);
-	    //check user level
-        if(empty($this->session->userdata['email'])){
-            redirect(site_url().'main/login/');
-        }else{
-			if($dataLevel == 'is_user'){
-				$data = array(
-					'isi'=> 'users/v_pemesanan',
-					'pemesanan' => $this->M_keranjang->getData($data['id'])
-				);
-				$this->load->view('users/layout/v_wrapper', $data, FALSE);
-			}else{
-				redirect(site_url().'main/login/');
-			}
-		}
+		$data = array(  
+            'isi'   =>  'users/v_pemesanan',
+		);
+		$this->load->view('users/layout/v_wrapper', $data, FALSE);
 	}
-
 	public function riwayat(){
-		$data = $this->session->userdata;
-	    if(empty($data)){
-	        redirect(site_url().'main/login/');
-	    }
+        $id_user=$this->session->userdata('id_pelanggan');
 
-	    //check user level
-	    if(empty($data['role'])){
-	        redirect(site_url().'main/login/');
-	    }
-	    $dataLevel = $this->userlevel->checkLevel($data['role']);
-	    //check user level
-        
-        if(empty($this->session->userdata['email'])){
-            redirect(site_url().'main/login/');
-        }else{
-			if($dataLevel == 'is_user'){
-				$data = array(
-					'isi' => 'users/v_riwayat',
-					'riwayat' => $this->M_riwayat->get_pesanan_produk_user($data['id'])
-				);
-				$this->load->view('users/layout/v_wrapper', $data, FalSE);
-			}else{
-				redirect(site_url().'main/login/');
-			}
-		}
-	}
-
-	public function profile(){
-		//user data from session
-	    $data = $this->session->userdata;
-	    if(empty($data)){
-	        redirect(site_url().'main/login/');
-	    }
-
-	    //check user level
-	    if(empty($data['role'])){
-	        redirect(site_url().'main/login/');
-	    }
-	    $dataLevel = $this->userlevel->checkLevel($data['role']);
-	    //check user level
-        if(empty($this->session->userdata['email'])){
-            redirect(site_url().'main/login/');
-        }else{
-			if($dataLevel == 'is_user'){
-				$data =array(
-					'isi' => 'users/v_profile',
-					'datauser' => $this->session->userdata
-				);
-				$this->load->view('users/layout/v_wrapper', $data, FALSE);
-			}else{
-				redirect(site_url().'main/login/');
-			}
-		}
-	}
-
-	public function add_to_cart(){
-        $id_produk = $this->input->post('id_produk');
-		$id = $this->session->userdata['id'];
-		$quantity = $this->input->post('jumlah');
-		// Mendapatkan nilai harga dari input dan mengganti koma menjadi titik
-		$harga_input = str_replace(',', '.', $this->input->post('harga'));
-
-		// Mengonversi nilai harga menjadi float
-		$harga_float = floatval($harga_input);
-
-		// Mengalikan nilai dengan faktor untuk mengubahnya ke dalam satuan rupiah
-		$harga_rupiah = $harga_float * 1000000; // 1 juta (untuk mengubah dari jutaan menjadi rupiah)
-		// Cek apakah produk sudah ada di keranjang
-		$existingItem = $this->M_keranjang->get_item_by_product_id($id_produk, $id);
-    
-        // Panggil model atau metode yang diperlukan untuk mengambil data produk
-        // $productData = $this->M_produk->getData($id_produk);
-		if ($existingItem) {
-			// Produk sudah ada di keranjang, perbarui jumlahnya
-			$newQuantity = $existingItem->kuantitas + $quantity;
-			$cek_hargadipesan = str_replace(',', '.', $existingItem->harga_dipesan);
-			$cek_harga_float = floatval($harga_input);
-			$cek_harga_rupiah = $harga_float * 1000000;
-			
-			$newharga_dipesan = $harga_rupiah + $cek_harga_rupiah;	
-			$newharga_format= number_format($newharga_dipesan, 0, ',', '.');
-			// $total_harga_format = number_format($total_harga, 0, ',', '.');
-			$this->M_keranjang->update_jumlah_produk($existingItem->id_keranjang, $newQuantity, $newharga_format);
-			$this->session->set_flashdata('success_message', 'Produk Ditambahkan Pemesanan');
-            redirect(site_url().'welcome/produk');
-		} else {
-			// Produk belum ada di keranjang, tambahkan sebagai item baru
-			$data = array(
-				'id' => $this->session->userdata['id'],
-				'id_produk' => $id_produk,
-				'tinggi_dipesan' => $this->input->post('tinggi'),
-				'lebar_dipesan' => $this->input->post('lebar'),
-				'harga_dipesan' => $this->input->post('harga'),
-				'kuantitas' => $quantity,
-				'rak' => $this->input->post('rak'),
-				'laci' => $this->input->post('laci'),
-				'jml_pintu' => $this->input->post('jml_pintu'),
-				'jenis_pintu' => $this->input->post('jenis_pintu'),
-				'warna' => $this->input->post('warna'),
-				'jml_gantungan' => $this->input->post('jml_gantungan'),
-				'deskripsi_dipesan' => $this->input->post('deskripsi_dipesan'),
-			);
-
-			$this->M_keranjang->add($data);
-			$this->session->set_flashdata('success_message', 'Produk Ditambahkan Pemesanan');
-            redirect(site_url().'welcome/produk');
-		}
-    }
-
-	public function update_cart(){
-		if ($this->input->is_ajax_request()) {
-            $id_keranjang = $this->input->post('id');
-            $jumlah = $this->input->post('jumlah');
-
-            // Panggil model untuk mengupdate jumlah di database
-            $this->M_keranjang->update_jumlah_produk($id_keranjang, $jumlah);
-
-            // Kirim tanggapan ke klien (jika diperlukan)
-            echo json_encode(['status' => 'success']);
-        } else {
-            // Tanggapan jika bukan permintaan Ajax
-            show_404();
-        }
-	}
-
-	public function delete(){
-		if ($this->input->is_ajax_request()) {
-            $id_produk = $this->input->post('id');
-
-            // Panggil model untuk menghapus data dari database
-            $this->M_keranjang->delete($id_produk);
-
-            // Kirim tanggapan ke klien
-            echo json_encode(['status' => 'success']);
-        } else {
-            // Tanggapan jika bukan permintaan Ajax
-            show_404();
-        }
-	}
-
-	public function countKuantitas(){
-            $id = $this->session->userdata['id'];
-
-			$totalQuantity = $this->M_keranjang->get_total_quantity($id);
-
-			// Kirim respons sebagai JSON
-			echo json_encode(['total_quantity' => $totalQuantity]);
-	}
-
-	public function detailProduk($id_produk){
-		$data = array(
-			'isi' => 'users/v_detail',
-			'produk' => $this->M_produk->getData($id_produk),
-			'galeri' => $this->M_galeri->getData($id_produk),
-			'warna' => $this->M_warna->AllData(),
+		$data = array(  
+            'isi'   =>  'users/v_riwayat',
+            'riwayat' => $this->M_pemesanan->getPesanan($id_user)
 		);
 		$this->load->view('users/layout/v_wrapper', $data, FALSE);
 	}
 
-	public function get_produk_by_kategori() {
-		$kategori = $this->input->post('kategori');
-		if(empty($kategori)){
-			$produk = $this->M_produk->allData();	
-		}else{
-			$produk =  $this->M_produk->get_produk_by_kategori($kategori);
-		}
-		$this->output->set_content_type('application/json')->set_output(json_encode($produk));
+	public function logout()
+    {
+        $this->session->sess_destroy();
+        redirect(site_url().'welcome/');
     }
 
 
-	public function simpan_pesanan() {
-        // Ambil data pesanan dari POST request
-		$user = $this->session->userdata;
-        $pesanan = $this->input->post('pesanan');
-		$id = $this->session->userdata['id'];
+	public function loginUser()
+    {
+        $data = $this->session->userdata;
+        if(!empty($data['username'])){
+	        redirect(site_url().'login/');
+	    }else{
+            $this->form_validation->set_rules('username', 'Username', 'required');
+            $this->form_validation->set_rules('password', 'Password', 'required');
 
-		$nama_pelanggan = $user['first_name'];
-        $tanggal_pesanan = date('Y-m-d');
-        $total_pembayaran = 0;
+            if($this->form_validation->run() == FALSE) {
+                $data = array(  
+					'isi'   =>  'login/v_home',
+				);
+				$this->load->view('users/layout/v_wrapper', $data, FALSE);
+            }else{
+                $post = $this->input->post();
+                $clean = $this->security->xss_clean($post);
+                $userInfo = $this->M_pelanggan->checkLogin($clean);
+                
+                if(!$userInfo)
+                {
+                    $this->session->set_flashdata('flash_message', 'Wrong password or email.');
+                    redirect(site_url().'welcome/login');
+                }
+                elseif($userInfo) //recaptcha check, success login, ban or unban
+                {
+                    foreach($userInfo as $key=>$val){
+                    $this->session->set_userdata($key, $val);
+                    }
+                    redirect(site_url().'welcome/');
+                }
+                else
+                {
+                    $this->session->set_flashdata('flash_message', 'Something Error!');
+                    redirect(site_url().'welcome/login/');
+                    exit;
+                }
+            }
+	    }
+    }
 
-		foreach ($pesanan as $item) {
-            $totalbayar = $item['totalbayar'];
-            // Lakukan apa pun yang perlu Anda lakukan dengan nilai totalbayar di sini
+	public function adduserPengguna()
+    {
+        $this->form_validation->set_rules('nama_pelanggan', 'Nama', 'required');
+        $this->form_validation->set_rules('username', 'username', 'required');
+        $this->form_validation->set_rules('jenis_kelamin', 'jenis kelamin', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
+        $this->form_validation->set_rules('passconf', 'Password Confirmation', 'required|matches[password]');
+        $this->form_validation->set_rules('email', 'email', 'required|valid_email');
+
+        if ($this->form_validation->run() == FALSE) {
+            $data = array(
+                'title' => 'Registrasi',
+                'isi' => 'login/v_registrasi'
+            );
+            $this->load->view('users/layout/v_wrapper', $data, FALSE);
+        }else{
+            if($this->M_pelanggan->isDuplicate($this->input->post('username'))){
+                $this->session->set_flashdata('flash_message', 'Username sudah digunakan');
+                redirect(site_url().'welcome/registrasi');
+            }else{
+                $this->load->library('password');
+                $post = $this->input->post(NULL, TRUE);
+                $cleanPost = $this->security->xss_clean($post);
+                $hashed = $this->password->create_hash($cleanPost['password']);
+                $cleanPost['nama_pelanggan'] = $this->input->post('nama_pelanggan');
+                $cleanPost['username'] = $this->input->post('username');
+                $cleanPost['tanggal_lahir'] = $this->input->post('tanggal_lahir');
+                $cleanPost['jenis_kelamin'] = $this->input->post('jenis_kelamin');
+                $cleanPost['no_hp'] = $this->input->post('no_hp');
+                $cleanPost['email'] = $this->input->post('email');
+                $cleanPost['level'] = 'user';
+                $cleanPost['password'] = $hashed;
+                
+                unset($cleanPost['passconf']);
+
+                //insert to database
+                if($this->M_pelanggan->add($cleanPost) == FALSE){
+                    $this->session->set_flashdata('flash_message', 'There was a problem add new user');
+                }else{
+                    $this->session->set_flashdata('success_message', 'New user has been added.');
+                }
+                redirect(site_url().'welcome/login');
+            };
+        }
+    }
+
+	public function forgot()
+    {
+        $data['title'] = "Forgot Password";
+        $this->load->library('curl');
+        $this->load->library('recaptcha');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+
+        if($this->form_validation->run() == FALSE) {
+            $data = array(
+                'title' => 'Registrasi',
+                'isi' => 'login/v_forgot'
+            );
+            $this->load->view('users/layout/v_wrapper', $data, FALSE);
+        }else{
+            $email = $this->input->post('email');
+            $clean = $this->security->xss_clean($email);
+            $userInfo = $this->M_pelanggan->getUserInfoByEmail($clean);
+
+            if(!$userInfo){
+                $this->session->set_flashdata('flash_message', 'We cant find your email address');
+                redirect(site_url().'welcome/forgot');
+            }
+
+            //generate token
+            $token = $this->M_pelanggan->insertToken($userInfo->id_pelanggan);
+            $qstring = $this->base64url_encode($token);
+            $url = site_url() . 'welcome/reset_password/token/' . $qstring;
+            $link = '<a href="' . $url . '">' . $url . '</a>';
+
+            $this->load->library('email');
+            $this->load->library('sendmail');
+            
+            $message = $this->sendmail->sendForgot($this->input->post('lastname'),$this->input->post('email'),$link,'Gor Umpu Kakah');
+            $to_email = $this->input->post('email');
+            $this->email->from($this->config->item('forgot'), 'Reset Password! ' . $this->input->post('firstname') .' '. $this->input->post('lastname')); //from sender, title email
+            // Pengaturan email
+            $config['protocol'] = 'smtp';
+            $config['smtp_host'] = 'smtp.gmail.com';
+            $config['smtp_port'] = 587;
+            $config['smtp_user'] = 'simpandrive803@gmail.com'; // Ganti dengan alamat email Anda
+            $config['smtp_pass'] = 'tleydnzevvrvmbda'; // Ganti dengan kata sandi email Anda
+            $config['smtp_crypto'] = 'tls';
+            $config['charset'] = 'utf-8';
+            $config['mailtype'] = 'html';
+            $config['newline'] = "\r\n";
+        
+            // Load konfigurasi email
+            $this->email->initialize($config);
+            // Pengaturan email
+            $this->email->from('simpandrive803@gmail.com', 'Admin'); // Ganti dengan alamat email dan nama Anda
+            $this->email->to($to_email); // Ganti dengan alamat email penerima
+            
+            $this->email->subject('Reset Password');
+            $this->email->message($message);
+
+            if($this->email->send()){
+                redirect(site_url().'welcome/successresetpassword/');
+            }else{
+                $this->session->set_flashdata('flash_message', 'There was a problem sending an email.');
+                exit;
+            }
         }
 
-        $id_pesanan = $this->M_pemesanan->simpan_pesanan($pesanan, $id);
+    }
 
-		$subject = 'Pemberitahuan: Pesanan Baru Diterima';
-        $message = "Dear Admin,<br><br>
-		Anda menerima pemberitahuan ini karena telah ada pesanan baru yang dibuat di sistem. Berikut adalah detailnya:<br><br>
-		ID Pesanan: $id_pesanan<br>
-		Nama Pelanggan: $nama_pelanggan<br>
-		Tanggal Pesanan: $tanggal_pesanan<br>
-		Total Pembayaran: Rp. $totalbayar <br><br>
-		Silakan segera cek sistem untuk detail lebih lanjut dan tindak lanjuti pesanan tersebut.<br><br>
-		Terima kasih.<br><br>
-		Salam,<br>
-		[Blesing Home Art]";
+	//reset password
+    public function reset_password()
+    {
+        $token = $this->base64url_decode($this->uri->segment(4));
+        $cleanToken = $this->security->xss_clean($token);
+        $user_info = $this->M_pelanggan->isTokenValid($cleanToken); //either false or array();
 
-        // Simpan data pesanan ke dalam tabel pesanan (order)
 
-		 // Pengaturan email
-		$config['protocol'] = 'smtp';
-		$config['smtp_host'] = 'smtp.gmail.com';
-		$config['smtp_port'] = 587;
-		$config['smtp_user'] = 'simpandrive803@gmail.com'; // Ganti dengan alamat email Anda
-		$config['smtp_pass'] = 'tleydnzevvrvmbda'; // Ganti dengan kata sandi email Anda
-		$config['smtp_crypto'] = 'tls';
-		$config['charset'] = 'utf-8';
-		$config['mailtype'] = 'html';
-		$config['newline'] = "\r\n";
-	
-		// Load konfigurasi email
-		$this->email->initialize($config);
-		 // Pengaturan email
-		 $this->email->from('simpandrive803@gmail.com', 'Admin'); // Ganti dengan alamat email dan nama Anda
-		 $this->email->to('putranugraha803@gmail.com'); // Ganti dengan alamat email penerima
-		
-		$this->email->subject($subject);
-		$this->email->message($message);
+        if(!$user_info){
+            $this->session->set_flashdata('flash_message', 'Token is invalid or expired');
+            redirect(site_url().'welcome/login');
+        }
+        $data = array(
+            'username'=> $user_info->username,
+            'email'=>$user_info->email,
+            //'user_id'=>$user_info->id,
+            'token'=>$this->base64url_encode($token)
+        );
 
-        if(($id_pesanan) && ($this->email->send())){
-			$this->M_pemesanan->simpan_detail_pesanan($id_pesanan, $pesanan);
-			$this->M_keranjang->deleteById($id);
+        $data['title'] = "Reset Password";
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
+        $this->form_validation->set_rules('passconf', 'Password Confirmation', 'required|matches[password]');
 
-			$response['success'] = true;
-            $response['message'] = 'Pesanan berhasil disimpan.';
+        if ($this->form_validation->run() == FALSE) {
+            $data = array(
+                'title' => 'Registrasi',
+                'isi' => 'login/reset_password.php',
+				'username'=> $user_info->username,
+				'email'=>$user_info->email,
+				//'user_id'=>$user_info->id,
+				'token'=>$this->base64url_encode($token)
+            );
+            $this->load->view('users/layout/v_wrapper', $data, FALSE);
+        }else{
+            $this->load->library('password');
+            $post = $this->input->post(NULL, TRUE);
+            $cleanPost = $this->security->xss_clean($post);
+            $hashed = $this->password->create_hash($cleanPost['password']);
+            $cleanPost['password'] = $hashed;
+            $cleanPost['id_pelanggan'] = $user_info->id_pelanggan;
+            unset($cleanPost['passconf']);
+
+
+            if($this->M_pelanggan->updatePassword($cleanPost) == FALSE){
+                $this->session->set_flashdata('flash_message', 'There was a problem updating your password');
+            }else{
+                $this->session->set_flashdata('success_message', 'Your password has been updated. You may now login');
+            }
+            redirect(site_url().'welcome/login');
+        }
+    }
+
+	 // if success after set password
+	public function successresetpassword()
+	{
+		$data['title'] = "Success Reset Password";
+		$this->load->view('login/reset-pass-info', $data);
+	}
+
+
+	public function base64url_encode($data) {
+		return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+	  }
+  
+	  public function base64url_decode($data) {
+		return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+	  }
+
+      public function add() {
+        // Ambil data pesanan dari POST request
+		$post = $this->input->post(NULL, TRUE);
+        $cleanPost = $this->security->xss_clean($post);
+        $cleanPost['id_pelanggan'] = $this->input->post('id_pelanggan');
+        $cleanPost['no_lapangan'] = $this->input->post('no_lapangan');
+        $cleanPost['tgl_main'] = $this->input->post('tgl_main');
+        $cleanPost['jam_bermain'] = $this->input->post('jam_bermain');
+        $cleanPost['total_bayar'] = $this->input->post('total_bayar');
+        
+        
+        $kode_pemesanan = $this->M_pemesanan->simpan_pesanan($cleanPost);
+        // Tangkap data jam_bermain dari checkbox
+        $jam_bermain_array = $this->input->post('jam');
+
+        if(($kode_pemesanan)){
+			// Loop melalui setiap nilai jam dan simpan sebagai entri terpisah dalam database
+            foreach ($jam_bermain_array as $jam) {
+                // Panggil fungsi simpan_detail_pesanan() dari model dan kirimkan setiap nilai jam sebagai parameter
+                $this->M_pemesanan->simpan_detail_pesanan($kode_pemesanan, $jam, $cleanPost['tgl_main'], $cleanPost['no_lapangan']);
+            }
+            $this->session->set_flashdata('success_message', 'Pesanan Sudah Dibuat.');
 		}else{
-			$response['success'] = false;
-            $response['message'] = 'Gagal menyimpan pesanan.';
+			$this->session->set_flashdata('success_message', 'Pesanan Gagal Dibuat.');
 		}
         // Mengembalikan response dalam format JSON
-        echo json_encode($response);
+        redirect(site_url().'welcome/pemesanan');
+    }
+
+    public function getJadwal() {
+        // Ambil data dari request AJAX
+        $tgl_main = $this->input->post('tgl_main');
+        $no_lapangan = $this->input->post('no_lapangan');
+
+        // Panggil model untuk mendapatkan data pemesanan berdasarkan nomor lapangan dan tanggal
+        $pemesanan = $this->M_pemesanan->get_pemesanan($no_lapangan, $tgl_main);
+
+        // Buat array untuk menyimpan jam pemesanan
+        $jam_pemesanan = array();
+
+        // Loop melalui hasil pemesanan dan tambahkan jam ke array
+        foreach ($pemesanan as $row) {
+            $jam_pemesanan[] = $row['jam_dipesan'];
+        }
+
+        // Kirim data dalam format JSON
+        echo json_encode($jam_pemesanan);
     }
 }
